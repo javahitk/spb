@@ -1,0 +1,595 @@
+Assignment 1: Basic DOM(it has lab1.html,attachbinding.js,handlers.js)
+------------------Lab1.html:---------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lab 1 - Basic DOM</title>
+  <style>
+    #box {
+      width: 50%;
+      height: 75px;
+      margin: 1em auto;
+      padding: 1.5em;
+      font: 1.5em Verdana, Helvetica, sans-serif;
+      text-align: center;
+    }
+    .section {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- FORM SECTION -->
+  <div class="section">
+    <form id="our_form">
+      <input type="text" name="foo" placeholder="Enter foo">
+      <input type="text" name="bar" placeholder="Enter bar">
+      <button type="submit">Click Me</button>
+      <button type="button" id="alert">Or Click Me!</button>
+    </form>
+    <div>
+      <span>Response: </span>
+      <span id="response"></span>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- BOX SECTION -->
+  <div class="section">
+    <button id="button-1">Toggle Box</button>
+    <button id="button-2">Rotate Colors</button>
+    <div id="box" style="background-color: red;">
+      <span>I am a box!</span>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- TAGS SECTION -->
+  <div class="section">
+    <button class="tags-button" id="bold-btn">&lt;b&gt; tags</button>
+    <button class="tags-button" id="italic-btn">&lt;i&gt; tags</button>
+    <button class="tags-button" id="underline-btn">&lt;u&gt; tags</button>
+    <div id="tags">
+      <b>This is inside a bold tag</b>, <u>and</u> <i>this is not</i>,
+      but <b><i>this</i></b> is inside <i>two tags <u>at once</u></i>!
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- CANVAS SECTION -->
+  <div class="section">
+    <canvas width="600" height="300" id="canvas"></canvas><br>
+    <button id="clearCanvas">Clear Canvas</button>
+  </div>
+
+  <!-- Scripts (order matters) -->
+  <script src="handler.js"></script>
+  <script src="attachbinding.js"></script>
+
+</body>
+</html>
+
+------------------------attachbinding.js:-------------------
+document.getElementById('our_form').addEventListener("submit", onFormSubmit);
+document.getElementById("alert").addEventListener("click", formAlert);
+document.getElementById("button-1").addEventListener("click", toggleBox);
+document.getElementById("button-2").addEventListener("click", rotateColors);
+
+// Attach listeners for the tag buttons
+Array.prototype.forEach.call(document.getElementsByClassName("tags-button"), function(el) {
+  el.addEventListener("click", onTagButtonClick);
+});
+
+// Canvas bindings
+document.getElementById("canvas").addEventListener("click", drawBox);
+initCanvas();
+document.getElementById("clearCanvas").addEventListener("click", initCanvas);
+-----------------------------handlers.js:--------------------------------------
+function toggleStyle(el, styleName, value, defaultValue = "") {
+  el.style[styleName] = (el.style[styleName] === value ? defaultValue : value);
+}
+
+function onFormSubmit(e) {
+  e.preventDefault();
+  const foo = document.getElementsByName("foo")[0].value;
+  const bar = document.getElementsByName("bar")[0].value;
+  document.getElementById("response").textContent = foo + " " + bar;
+}
+
+function formAlert(e) {
+  const foo = document.getElementsByName("foo")[0].value;
+  const bar = document.getElementsByName("bar")[0].value;
+  alert(`foo: ${foo}, bar: ${bar}`);
+}
+
+function toggleBox() {
+  const box = document.getElementById("box");
+  box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+
+function rotateColors() {
+  const box = document.getElementById("box");
+  const colors = ["red", "blue", "green"];
+  let current = box.style.backgroundColor || "red";
+  const next = colors[(colors.indexOf(current) + 1) % colors.length];
+  box.style.backgroundColor = next;
+}
+
+function onTagButtonClick(e) {
+  const id = e.target.id;
+  const tagsEl = document.getElementById("tags");
+
+  if (id === "bold-btn") {
+    tagsEl.querySelectorAll("b").forEach(el => 
+      toggleStyle(el, "backgroundColor", "yellow", "")
+    );
+  } else if (id === "italic-btn") {
+    tagsEl.querySelectorAll("i").forEach(el => 
+      toggleStyle(el, "color", "blue", "")
+    );
+  } else if (id === "underline-btn") {
+    tagsEl.querySelectorAll("u").forEach(el => 
+      toggleStyle(el, "textDecoration", "none", "underline")
+    );
+  }
+}
+
+function initCanvas() {
+  const c = document.getElementById("canvas");
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = "#ddd";
+  ctx.fillRect(0, 0, c.width, c.height);
+}
+
+function randomColor() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgb(${r},${g},${b})`;
+}
+
+function drawBox(e) {
+  const c = document.getElementById("canvas");
+  const ctx = c.getContext("2d");
+
+  const mouseX = e.offsetX;
+  const mouseY = e.offsetY;
+
+  const width = Math.floor(Math.random() * 150) + 50;
+  const height = Math.floor(Math.random() * 50) + 50;
+
+  const x = mouseX - width / 2;
+  const y = mouseY - height / 2;
+
+  ctx.fillStyle = randomColor();
+  ctx.fillRect(x, y, width, height);
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ASSIGNMENT 2:-hello1,hello2,helllo3,greetings.txt(welcom,hi,hello,...,..) do using node fie.js
+---------hello1.js-run hello world three times------
+for (var i = 0; i < 5; i++) {
+    console.log("Hello, world!");
+  }
+---------app.js ask you name -----------
+var fs = require("fs");
+var readline = require("readline");
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+var greetingsFile = fs.readFileSync("greetings.txt");
+var greetings_string = greetingsFile.toString();
+var greetings = greetings_string.split("\n");
+
+// Remove last element if it's an empty string.
+if (greetings[greetings.length - 1] === '') {
+  greetings.pop();
+}
+
+rl.question("What is your name? ", function(name) {
+  for (var i = 0; i < 5; i++) {
+    var greeting = greetings[Math.floor(Math.random() * greetings.length)];
+    console.log(greeting + ",");
+    console.log(greeting + ", " + name);
+  }
+  rl.close();
+});
+----------server.js do using port on website------------
+var http = require("http");
+var fs = require("fs");
+var url = require("url");
+
+var greetings;
+fs.readFile("greetings.txt", function(err, body) {
+  if (err === null) {
+    greetings = body.toString().split("\n");
+    // Remove last element if it's an empty string.
+    if (greetings.slice(-1) == "") {
+      greetings.pop();
+    }
+
+    var server = http.createServer(function(req, res) {
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      var query = url.parse(req.url, true).query;
+      var name = query.name;
+      var greeting = greetings[Math.floor(Math.random() * greetings.length)];
+      if (name) {
+        res.end(greeting + ", " + name);
+      } else {
+        res.end(greeting);
+      }
+    });
+
+    server.listen(8080, function() {
+      console.log("Server running on http://localhost:8080");
+    });
+
+  } else {
+    console.error("Error reading greetings.txt:", err);
+  }
+});
+---------------------------------------------------------------------------------------------------------------------------------------
+ASSIGNMENT 3:- CALCULATOR(calculator.js,instructions.txt
+option 1:(mannual):-
+var readline = require("readline");
+
+// Create interface for user input/output
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+console.log("=== Simple Calculator ===");
+
+rl.question("Enter first number: ", function(a) {
+  rl.question("Enter second number: ", function(b) {
+    rl.question("Enter operation (add / sub / mul / div): ", function(op) {
+      a = parseFloat(a);
+      b = parseFloat(b);
+
+      if (isNaN(a) || isNaN(b)) {
+        console.log("❌ Invalid input! Please enter numbers only.");
+        rl.close();
+        return;
+      }
+
+      var result;
+      switch (op.toLowerCase()) {
+        case "add":
+          result = a + b;
+          break;
+        case "sub":
+          result = a - b;
+          break;
+        case "mul":
+          result = a * b;
+          break;
+        case "div":
+          if (b === 0) {
+            console.log("❌ Error: Division by zero is not allowed.");
+            rl.close();
+            return;
+          }
+          result = a / b;
+          break;
+        default:
+          console.log("❌ Invalid operation! Use add, sub, mul, or div.");
+          rl.close();
+          return;
+      }
+
+      console.log(`✅ Result: ${a} ${op} ${b} = ${result}`);
+      rl.close();
+    });
+  });
+});
+
+option2(url):-http://localhost:8080/?a=10&b=5&op=add,sub,mul,duv
+var http = require("http");
+var url = require("url");
+
+var server = http.createServer(function (req, res) {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+
+  var query = url.parse(req.url, true).query;
+  var a = parseFloat(query.a);
+  var b = parseFloat(query.b);
+  var op = query.op;
+
+  if (isNaN(a) || isNaN(b) || !op) {
+    res.end("❌ Please provide valid inputs! Example: http://localhost:8080/?a=10&b=5&op=add");
+    return;
+  }
+
+  var result;
+
+  switch (op.toLowerCase()) {
+    case "add":
+      result = a + b;
+      res.end(`✅ Result: ${a} + ${b} = ${result}`);
+      break;
+    case "sub":
+      result = a - b;
+      res.end(`✅ Result: ${a} - ${b} = ${result}`);
+      break;
+    case "mul":
+      result = a * b;
+      res.end(`✅ Result: ${a} × ${b} = ${result}`);
+      break;
+    case "div":
+      if (b === 0) {
+        res.end("❌ Division by zero is not allowed!");
+      } else {
+        result = a / b;
+        res.end(`✅ Result: ${a} ÷ ${b} = ${result}`);
+      }
+      break;
+    default:
+      res.end("❌ Invalid operation! Use one of: add, sub, mul, div");
+      break;
+  }
+});
+
+server.listen(8080, function () {
+  console.log("Server running at http://localhost:8080/");
+  console.log("Try this example in your browser:");
+  console.log("http://localhost:8080/?a=10&b=5&op=add");
+});
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+ASSIGNMENT 4:-WEATHER
+-------index.html:------------
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Weather App</title>
+    <link href="style.css" type="text/css" rel="stylesheet">
+    <script src="ajax.js"></script>
+    <script src="weather.js"></script>
+  </head>
+  <body>
+    <form id="weather">
+      <label for="zipCode">ZIP Code:</label>
+      <input type="text" id="zipCode" name="zipCode" required>
+      <button type="submit">Get Weather</button>
+    </form>
+
+    <div id="response">
+      <div id="error" style="display:none; color:red;"></div>
+      <table id="results" style="display:none;">
+        <tr>
+          <td colspan="2" id="location"></td>
+          <td id="icon"></td>
+        </tr>
+        <tr>
+          <td>Temperature:</td>
+          <td id="temp"></td>
+        </tr>
+        <tr>
+          <td>Wind Speed:</td>
+          <td id="windspeed"></td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      document.getElementById("weather").addEventListener("submit", getWeather);
+    </script>
+  </body>
+</html>
+
+------ajax.js--------
+var AJAX = (function(window, undefined) {
+  var req = function() {
+    try {
+      return new ActiveXObject('Msxml2.XMLHTTP');
+    } catch(e) {
+      try {
+        return new ActiveXObject('Microsoft.XMLHTTP');
+      } catch(e) {
+        return new XMLHttpRequest();
+      }
+    }
+  };
+
+  var send = function(url, callback, method, data) {
+    var x = req();
+    x.open(method, url, true);
+    x.onreadystatechange = function() {
+      if (x.readyState === 4) {
+        if (x.status === 404) {
+          callback(x.statusText);
+        } else {
+          callback(null, x.responseText);
+        }
+      }
+    };
+    if (method === 'POST') {
+      x.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    }
+    x.send(data);
+  };
+
+  var getJSON = function(url, callback) {
+    send(url, function(err, data) {
+      if (!err) {
+        callback(err, JSON.parse(data));
+      } else {
+        callback(err);
+      }
+    }, 'GET');
+  };
+
+  var get = function(url, callback) {
+    send(url, callback, 'GET');
+  };
+
+  var post = function(url, callback, data) {
+    send(url, callback, 'POST', data);
+  };
+
+  return {
+    get: get,
+    getJSON: getJSON,
+    post: post
+  };
+})(this);
+---------------weather.js--------------
+var key = '438550bb8ece50f33573be517114368b'; // your OpenWeatherMap key
+
+function onWeather(err, data) {
+  if (err) {
+    var result = document.getElementById("results");
+    result.style.display = "none";
+
+    var el = document.getElementById("error");
+    el.textContent = "Error occurred: " + err;
+    el.style.display = "block";
+    return;
+  }
+
+  // Clear old error
+  document.getElementById("error").style.display = "none";
+
+  // Set temperature and wind speed
+  document.getElementById("temp").innerHTML = data.main.temp + " °F";
+  document.getElementById("windspeed").innerHTML = data.wind.speed + " mph";
+
+  // Set location
+  document.getElementById("location").textContent = data.name + ", " + data.sys.country;
+
+  // Display icon
+  var iconUrl = "https://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
+  document.getElementById("icon").innerHTML = `<img src="${iconUrl}" alt="Weather Icon" width="50" height="50">`;
+
+  // Show table
+  document.getElementById("results").style.display = "table";
+}
+
+function onZipCode(err, data) {
+  if (err) {
+    var result = document.getElementById("results");
+    result.style.display = "none";
+
+    var el = document.getElementById("error");
+    el.textContent = "Invalid ZIP code or network error.";
+    el.style.display = "block";
+    return;
+  }
+
+  var CITY = data.places[0]["place name"];
+  var STATE = data.places[0]["state abbreviation"];
+  var COUNTRY = data["country abbreviation"];
+
+  console.log("City:", CITY, "State:", STATE, "Country:", COUNTRY);
+
+  // Build OpenWeatherMap URL (imperial for °F)
+  var url = `https://api.openweathermap.org/data/2.5/weather?q=${CITY},${STATE},${COUNTRY}&units=imperial&appid=${key}`;
+  
+  AJAX.getJSON(url, onWeather);
+}
+
+function getWeather(e) {
+  e.preventDefault();
+
+  var zipCode = document.getElementById("zipCode").value.trim();
+  if (!zipCode) {
+    var el = document.getElementById("error");
+    el.textContent = "Please enter a valid ZIP code.";
+    el.style.display = "block";
+    return;
+  }
+
+  document.getElementById("error").style.display = "none";
+
+  var url = `https://api.zippopotam.us/us/${zipCode}`;
+  AJAX.getJSON(url, onZipCode);
+}
+--------------------------------------------------------------------------------------------------------------------------
+ASSIGNMENT 5:-(EMPLOYEE)-
+---CALLBACK.JS--
+var getBonusedEmployees = function (employees, bonus) {
+  var bonusedEmployees = [];
+
+  employees.forEach(function (emp) {
+    // Make sure employee has id and salary
+    if (!emp.id || typeof emp.salary !== "number") return;
+
+    // Check if bonus has a matching key
+    if (bonus[emp.id]) {
+      bonusedEmployees.push({
+        id: emp.id,
+        fullname: emp.name,
+        salary: emp.salary + emp.yearsWorking * 1000, // adjust formula as needed
+      });
+    }
+  });
+
+  return bonusedEmployees;
+};
+
+module.exports = {
+  getBonusedEmployees: getBonusedEmployees,
+};
+
+--PROMISE.JS---
+var utils = require("./functions");
+var Promise = require("bluebird");
+var fs = Promise.promisifyAll(require("fs"));
+var file1 = fs.readFileAsync("employees.json");
+var file2 = fs.readFileAsync("bonuses.json");
+var bonusedemployees;
+// Call this callback when both file1 and file2 are ready...
+Promise.all([file1, file2]).spread(function(file1, file2) {
+file1 = JSON.parse(file1);
+file2 = JSON.parse(file2);
+// do stuff with file1 and file2
+bonusedemployees = utils.getBonusedEmployees(file1,file2);
+//console.log(bonusedemployees);
+var logdata = JSON.stringify(bonusedemployees);
+console.log(logdata);
+var file3 = fs.writeFileAsync("bonusedEmployees.json",logdata);
+var file4 = fs.writeFileAsync("log.txt",logdata);
+Promise.all([file3, file4]).spread(function() {
+console.log("Data Write Complete");
+});
+});
+--FUNCTION.JS---
+var getBonusedEmployees = function(employees,bonus){
+var bonusemployee = [];
+employees.forEach(function(item) {
+Object.keys(item).forEach(function(key1) {
+if(key1==="id")
+{
+Object.keys(bonus).forEach(function(key2) {
+if(item[key1]===key2 && bonus[key2]){
+//console.log("id:" + item["id"] + ",full name" + item["name"] + ",salary :" +
+
+item["salary"]);
+
+bonusemployee.push({id:item["id"],fullname:item["name"],salary:(item["salary"]+
+
+item["yearsWorking"]*1000)});
+}
+});
+}
+});
+});
+return bonusemployee;
+}
+module.exports = {
+getBonusedEmployees: getBonusedEmployees
+};
+
