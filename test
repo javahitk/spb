@@ -238,115 +238,104 @@ fs.readFile("greetings.txt", function(err, body) {
   }
 });
 ---------------------------------------------------------------------------------------------------------------------------------------
-ASSIGNMENT 3:- CALCULATOR(calculator.js,instructions.txt
-option 1:(mannual):-
+ASSIGNMENT 3:Calculator
+---calculator.js(Manual Option)---
 var readline = require("readline");
+var fs = require("fs");
 
-// Create interface for user input/output
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
-
 console.log("=== Simple Calculator ===");
-
 rl.question("Enter first number: ", function(a) {
   rl.question("Enter second number: ", function(b) {
-    rl.question("Enter operation (add / sub / mul / div): ", function(op) {
+    rl.question("Enter operation (add/sub/mul/div): ", function(op) {
       a = parseFloat(a);
       b = parseFloat(b);
-
-      if (isNaN(a) || isNaN(b)) {
-        console.log("❌ Invalid input! Please enter numbers only.");
+if (isNaN(a) || isNaN(b)) {
+console.log(" Invalid input! Please enter numbers only.");
         rl.close();
         return;
       }
-
-      var result;
+var result;
       switch (op.toLowerCase()) {
-        case "add":
-          result = a + b;
+        case "add":  result = a + b;
           break;
-        case "sub":
-          result = a - b;
+        case "sub":   result = a - b;
           break;
-        case "mul":
-          result = a * b;
+        case "mul":   result = a * b;
           break;
-        case "div":
-          if (b === 0) {
-            console.log("❌ Error: Division by zero is not allowed.");
+        case "div":    if (b === 0) {
+            console.log("Error: Division by zero is not allowed.");
             rl.close();
             return;
-          }
-          result = a / b;
+          }   result = a / b;
           break;
         default:
-          console.log("❌ Invalid operation! Use add, sub, mul, or div.");
+          console.log("invalid operation! Use add, sub, mul, or div.");
           rl.close();
           return;
       }
 
-      console.log(`✅ Result: ${a} ${op} ${b} = ${result}`);
-      rl.close();
-    });
-  });
-});
+      var output = ` Result: ${a} ${op} ${b} = ${result}\n`;
+      console.log(output);
 
-option2(url):-http://localhost:8080/?a=10&b=5&op=add,sub,mul,duv
+      fs.appendFile("result.txt", output, function(err) {
+        if (err) throw err;
+        console.log("📝 Result saved to result.txt");
+      });
+rl.close();  });  });  });
+
+---server.js(URL Option)---
 var http = require("http");
 var url = require("url");
-
-var server = http.createServer(function (req, res) {
+var fs = require("fs");
+var server = http.createServer(function(req, res) {
   res.writeHead(200, { "Content-Type": "text/plain" });
-
-  var query = url.parse(req.url, true).query;
+var query = url.parse(req.url, true).query;
   var a = parseFloat(query.a);
   var b = parseFloat(query.b);
   var op = query.op;
-
-  if (isNaN(a) || isNaN(b) || !op) {
-    res.end("❌ Please provide valid inputs! Example: http://localhost:8080/?a=10&b=5&op=add");
+if (isNaN(a) || isNaN(b) || !op) {
+    res.end(" Please provide valid inputs! Example: http://localhost:8080/?a=10&b=5&op=add");
     return;
   }
-
-  var result;
-
+var result, output;
   switch (op.toLowerCase()) {
     case "add":
       result = a + b;
-      res.end(`✅ Result: ${a} + ${b} = ${result}`);
+      output = ` Result: ${a} + ${b} = ${result}`;
       break;
     case "sub":
       result = a - b;
-      res.end(`✅ Result: ${a} - ${b} = ${result}`);
+      output = `Result: ${a} - ${b} = ${result}`;
       break;
     case "mul":
       result = a * b;
-      res.end(`✅ Result: ${a} × ${b} = ${result}`);
+      output = ` Result: ${a} × ${b} = ${result}`;
       break;
     case "div":
       if (b === 0) {
-        res.end("❌ Division by zero is not allowed!");
+        output = " Division by zero is not allowed!";
       } else {
         result = a / b;
-        res.end(`✅ Result: ${a} ÷ ${b} = ${result}`);
+        output = ` Result: ${a} ÷ ${b} = ${result}`;
       }
       break;
     default:
-      res.end("❌ Invalid operation! Use one of: add, sub, mul, div");
-      break;
-  }
-});
-
-server.listen(8080, function () {
+      output = " Invalid operation! Use one of: add, sub, mul, div";
+      break; }
+res.end(output);
+fs.appendFile("result.txt", output + "\n", function(err) {
+    if (err) console.error("️ Error saving result:", err);
+    else console.log("📝 Result saved to result.txt");
+  }); });
+server.listen(8080, function() {
   console.log("Server running at http://localhost:8080/");
   console.log("Try this example in your browser:");
-  console.log("http://localhost:8080/?a=10&b=5&op=add");
+console.log("http://localhost:8080/?a=10&b=5&op=add");
 });
-
-
-
 ---------------------------------------------------------------------------------------------------------------------------------------
 ASSIGNMENT 4:-WEATHER
 -------index.html:------------
